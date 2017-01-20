@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# code from: https://github.com/ardyadipta/ROS/blob/master/camera_image/scripts/ip_camera.py
+# interestingly this part-by-part reading works just as fast as using cv2.VideoCapture
 import cv2
 import urllib 
 import numpy as np
