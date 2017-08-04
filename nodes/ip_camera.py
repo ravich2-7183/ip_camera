@@ -1,15 +1,12 @@
 #!/usr/bin/env python
-import cv2
-import urllib 
-import numpy as np
-from sensor_msgs.msg import Image 
-import roslib
 import sys
+import cv2
+import argparse
+import roslib
 import rospy
-import cv
+from sensor_msgs.msg import Image 
 from std_msgs.msg import String
 from cv_bridge import CvBridge, CvBridgeError 
-import argparse
 
 class IPCamera(object):
     def __init__(self, url):
@@ -19,7 +16,7 @@ class IPCamera(object):
             rospy.logerr('Unable to open ip camera stream: ' + str(url))
             sys.exit()
         self.bytes=''
-        self.image_pub = rospy.Publisher("ip_camera", Image, queue_size=10)
+        self.image_pub = rospy.Publisher("/camera/image_raw", Image, queue_size=10)
         self.bridge = CvBridge()
 
 if __name__ == '__main__':
@@ -27,8 +24,8 @@ if __name__ == '__main__':
     # $ python ip_camera -u YOUR_IP_CAMERA_URL -g
     parser = argparse.ArgumentParser(prog='ip_camera.py', description='reads a given url string and dumps it to a ros_image topic')
     parser.add_argument('-g', '--gui', action='store_true', help='show a GUI of the camera stream')
-    parser.add_argument('-u', '--url', default='http://192.168.43.1:8080/video?x.mjpeg', help='camera stream url to parse')
-    args = parser.parse_args()
+    parser.add_argument('-u', '--url', default='http://192.168.43.1:8080/video', help='camera stream url to parse')
+    args = parser.parse_args(rospy.myargv()[1:])
     
     rospy.init_node('ip_camera', anonymous=True)
     
