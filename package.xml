@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>ip_camera</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>Publish images from an IP Camera</description>
 
   <maintainer email="ravich3141@gmail.com">ravich</maintainer>
