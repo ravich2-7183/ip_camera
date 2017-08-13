@@ -38,11 +38,13 @@ if __name__ == '__main__':
         if ret == False:
             break
         
-        ip_camera.image_pub.publish(ip_camera.bridge.cv2_to_imgmsg(frame, "bgr8"))
-
+        img_msg = ip_camera.bridge.cv2_to_imgmsg(frame, "bgr8")
+        img_msg.header.stamp = rospy.get_rostime()
+        ip_camera.image_pub.publish(img_msg)
+        
         if args.gui:
             cv2.imshow('IP Camera', frame)
-            if cv2.waitKey(1) == 27: 
+            if cv2.waitKey(1) == 27:
                 break
 
     ip_camera.vcap.release()
