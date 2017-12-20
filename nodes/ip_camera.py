@@ -15,7 +15,6 @@ class IPCamera(object):
         except:
             rospy.logerr('Unable to open ip camera stream: ' + str(url))
             sys.exit()
-        self.bytes=''
         self.image_pub = rospy.Publisher("/camera/image_raw", Image, queue_size=10)
         self.bridge = CvBridge()
 
@@ -36,6 +35,7 @@ if __name__ == '__main__':
     while not rospy.is_shutdown() and ip_camera.vcap.isOpened():
         ret, frame = ip_camera.vcap.read()
         if ret == False:
+            print 'Could not read frame'
             break
         
         img_msg = ip_camera.bridge.cv2_to_imgmsg(frame, "bgr8")
