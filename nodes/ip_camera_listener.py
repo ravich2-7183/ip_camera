@@ -19,9 +19,11 @@ class IPCameraListener(object):
         self.vcap_source = ''
         if ret == True:
             self.vcap_source = 'cv2'
+            print 'Using cv2.VideoCapture'
         else:
             self.vcap_source = 'requests'
             self.vcap = requests.get(url, stream=True)
+            print 'Reading directly from http image stream'
         
         print 'Successfully opened ip camera listener...images will be published on receipt of img_processed messages'
         
@@ -36,18 +38,16 @@ class IPCameraListener(object):
             bytes = ''
             while True:
                 bytes += self.vcap.raw.read(1024) # TODO search only in the current 1024 block
-                a = bytes.find('\xff\xd8') # jpg begin symbol
+                a = bytes.find('\xff\xd8') # jpg begin symbol # TODO check for 'unlucky' coincidences
                 if a != -1:
                     bytes = bytes[a:]
                     break
             while True:
                 bytes += self.vcap.raw.read(1024) # TODO search only in the current 1024 block
-                b = bytes.find('\xff\xd9') # jpg end symbol
-                if b != -1:
+                b = bytes.find('\xff\xd9') # jpg end symbol # TODO check for 'unlucky' coincidences
+                if b != -1: # and (b-a) >= 640*480*3: # TODO remove assumption that images are color VGA
                     break
             jpg = bytes[0:b+2]
-            if len(jpg) == 0:
-                print 'len(jpg) == 0'
             frame = cv2.imdecode(np.fromstring(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
         
         img_msg = self.bridge.cv2_to_imgmsg(frame, "bgr8")
